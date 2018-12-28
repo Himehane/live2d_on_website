@@ -23,7 +23,12 @@ Baseed on EULA ，DO NOT pull Cubism SDKs on repositorie!DO NOT modify fiels in 
 Any legal dispute arising from the violation of the above provisions shall be the responsibility of the violators!
 
 ## LICENSE
+由于文件基于Live2D 的开源git项目编写，所以以下文件遵循 GNU General Public License, version 2
 
+- [GNU General Public License, version 2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
+   - loadModel.js
+   - live2d.html
+   
 Live2D Cubism Core は Live2D Proprietary Software License で提供しています。
  - Live2D Proprietary Software License 
 [日本語](http://www.live2d.com/eula/live2d-proprietary-software-license-agreement_jp.html) 
