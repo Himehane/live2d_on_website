@@ -27,7 +27,6 @@ Any legal dispute arising from the violation of the above provisions shall be th
 
 - [GNU General Public License, version 2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
    - loadModel.js
-   - live2d.html
    
 Live2D Cubism Core は Live2D Proprietary Software License で提供しています。
  - Live2D Proprietary Software License 
