@@ -2,7 +2,7 @@ var LIVE2DCUBISMCORE =Live2DCubismCore
 //如果资源在CDN，一定要写http://或者https://否则会以本域名请求且为相对路径
 var themePath = window.location.protocol+'//'+ window.location.host+"/Resource/../..";
 //模型的model3.json文件
-var modelPath = themePath + 'yor model3.json file';
+var modelPath = themePath + 'your model3.json file';
 //模型渲染的位置
 var tag_target = '.waifu';
 //待机的动作索引
@@ -28,7 +28,6 @@ function initModelConfig(modelJson){
     var textures = fileReferences.Textures;
     loadTextures(textures);
     var phyPath = fileReferences.Physics;
-    var motions;
     for (const key in fileReferences.Motions) {
         motions =  fileReferences.Motions[key];
         console.log(motions);
@@ -165,7 +164,6 @@ function setModel(model){
 }
 //设置模型动作
 function setMotions(model,resources){
-    var motions = [];
     for (const key in resources) {
         if(key.indexOf('motion') != -1){
             motions.push(LIVE2DCUBISMFRAMEWORK.Animation.fromMotion3Json(resources[key].data)); 
