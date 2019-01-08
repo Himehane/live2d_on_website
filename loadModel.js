@@ -1,8 +1,7 @@
 var LIVE2DCUBISMCORE = Live2DCubismCore
 //如果资源在CDN，一定要写http://或者https://否则会以本域名请求且为相对路径
-var themePath = window.location.protocol+'//'+ window.location.host+"/live2d_on_websit/Resource/../..";
-//模型的model3.json文件
-var modelPath = themePath + '/' + 'your model3.json file';
+//模型的model3.json文件路径
+var modelPath = window.location.protocol+'//'+ window.location.host+"/live2d_on_websit/Resource/../..";
 //模型渲染的位置
 var tag_target = '.waifu';
 //待机的动作索引
@@ -73,7 +72,7 @@ function initModelConfig(modelJson){
 //加载MOC文件
 function loadMoc(mocPath){
     if(typeof(mocPath) !== 'undefined'){
-        PIXI.loader.add('moc', themePath + mocPath, { xhrType: PIXI.loaders.Resource.XHR_RESPONSE_TYPE.BUFFER });
+        PIXI.loader.add('moc', modelPath.substr(0, modelPath.lastIndexOf('/') + 1) + mocPath, { xhrType: PIXI.loaders.Resource.XHR_RESPONSE_TYPE.BUFFER });
     }else{
         console.log('Not find moc');
     }
@@ -83,7 +82,7 @@ function loadTextures(textures){
     if(textures.length >0){
         for (let i = 0; i < textures.length; i++) {
             //loadTextures;
-            PIXI.loader.add('texture' + ( i + 1) , themePath + textures[i]);
+            PIXI.loader.add('texture' + ( i + 1) , modelPath.substr(0, modelPath.lastIndexOf('/') + 1) + textures[i]);
         }
     }else{
         console.log("Not find textures");
@@ -92,7 +91,7 @@ function loadTextures(textures){
 // 加载physics文件
 function loadPhyPath(phyPath){
     if(typeof(phyPath) !== 'undefined'){
-        PIXI.loader.add('physics', themePath + phyPath, { xhrType: PIXI.loaders.Resource.XHR_RESPONSE_TYPE.JSON });
+        PIXI.loader.add('physics', modelPath.substr(0, modelPath.lastIndexOf('/') + 1) + phyPath, { xhrType: PIXI.loaders.Resource.XHR_RESPONSE_TYPE.JSON });
     }else{
         console.log('Not find physics');
     }
@@ -101,7 +100,7 @@ function loadPhyPath(phyPath){
 function loadMotions(motions){
     if(motions.length >0){
         for (let i = 0; i < motions.length; i++) {
-            PIXI.loader.add('motion'+ ( motionCount + 1) , themePath + motions[i].File, { xhrType: PIXI.loaders.Resource.XHR_RESPONSE_TYPE.JSON });
+            PIXI.loader.add('motion'+ ( motionCount + 1) , modelPath.substr(0, modelPath.lastIndexOf('/') + 1) + motions[i].File, { xhrType: PIXI.loaders.Resource.XHR_RESPONSE_TYPE.JSON });
             if(motions[i].File.indexOf('idle')!= -1){
                 idleIndex = motionCount;
             }else if(motions[i].File.indexOf('login') != -1){
@@ -139,7 +138,7 @@ function loadModel(url){
 }
 //另一种初始化模型方式
 function initModel(data){
-    var model3Obj = {data:data,url:themePath};
+    var model3Obj = {data:data,url: modelPath.substr(0, modelPath.lastIndexOf('/') + 1)};
     var loader =PIXI.loader.on("progress", loadProgressHandler);
     for (const key in data.FileReferences.Motions) {
         loadMotions(data.FileReferences.Motions[key]);
