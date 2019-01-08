@@ -4,12 +4,11 @@
 		<meta charset="UTF-8">
         <title>live2d</title>
         <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
-    <script src="pixi/pixi.min.js"></script>
-    <script src="core/live2dcubismcore.min.js"></script>
-    <script src="framework/live2dcubismframework.js"></script>
-    <script src="framework/live2dcubismpixi.js"></script>
-    <script src="loadModel.js"></script>
-	
+        <script src="pixi/pixi.min.js"></script>
+        <script src="core/live2dcubismcore.min.js"></script>
+        <script src="framework/live2dcubismframework.js"></script>
+        <script src="framework/live2dcubismpixi.js"></script>
+        <script src="loadModel.js"></script>
     <style>
     .waifu {
         position: fixed;
@@ -260,6 +259,8 @@
 	<body>
 		<div class="waifu">
             <div class="waifu-tips" style="opacity: 0;"></div>
+            <canvas id="live2d"></canvas>
         </div>
-	</body>
+    </body>
+    <script>loadModel(modelPath);</script>
 </html>
