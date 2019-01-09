@@ -11,13 +11,13 @@ var loginIndex;
 //回港动作，只针对碧蓝航线等有回港动作，动作文件中有home字段
 var homeIndex;
 //模型偏移位置
-var model_x = -25;
+var model_x = -15;
 var model_y = 40;
 //渲染模型的宽高
-var modelWidth = 360;
-var modelHight = 320;
+var modelWidth = 280;
+var modelHight = 250;
 //渲染模型的比例
-var scale = 22;
+var scale = 19;
 //动作总数
 var motionCount = 0 ;
 //测试用，加载时间起点，不保证准确性
@@ -54,19 +54,7 @@ function initModelConfig(modelJson){
         app.stage.addChild(model.masks);
         var motions = setMotions(model,resources);
         setMouseTrick(model,app,canvas,motions);
-        var onResize = function (event) {
-            if (event === void 0) { event = null; }
-                var width = modelWidth;
-                var height = modelHight;
-                app.view.style.width = width + "px";
-                app.view.style.height = height + "px";
-                app.renderer.resize(width, height);
-                model.position = new PIXI.Point(modelWidth/2 + model_x, modelHight/2 + model_y);
-                model.scale = new PIXI.Point(scale, scale);
-                model.masks.resize(app.view.width, app.view.height);
-        };
-        onResize();
-        window.onresize = onResize;
+        setOnResize(model,app);
     });
 }
 //加载MOC文件
@@ -111,30 +99,8 @@ function loadMotions(motions){
             motionCount ++ ;
         }
     }else{
-        console.error('Not find motions')
+        console.error('Not find motions');
     }
-}
-//简单发送AJAX异步请求读取json文件
-function loadModel(url){
-    var ajax = null;
-    if(window.XMLHttpRequest){ajax = new XMLHttpRequest();}else if(window.ActiveObject){
-        ajax = new ActiveXObject("Microsoft.XMLHTTP");
-    }else{
-        throw new Error('loadModelJsonError');
-    }  
-    ajax.open('GET', url, true);
-    ajax.send();
-    ajax.onreadystatechange = function(){
-        if(ajax.readyState == 4){  
-            if(ajax.status == 200){ 
-                var data = JSON.parse(ajax.responseText)
-                //initModelConfig(data);
-                initModel(data);
-            }else{
-                console.error('Response error,Code:' + ajax.status);
-            }
-        }
-    };
 }
 //另一种初始化模型方式
 function initModel(data){
@@ -155,19 +121,7 @@ function setModel(model){
     app.stage.addChild(model.masks);
     var motions = setMotions(model,PIXI.loader.resources);
     setMouseTrick(model,app,canvas,motions);
-    var onResize = function (event) {
-        if (event === void 0) { event = null; }
-            var width = modelWidth;
-            var height = modelHight;
-            app.view.style.width = width + "px";
-            app.view.style.height = height + "px";
-            app.renderer.resize(width, height);
-            model.position = new PIXI.Point(modelWidth/2 + model_x, modelHight/2 + model_y);
-            model.scale = new PIXI.Point(scale, scale);
-            model.masks.resize(app.view.width, app.view.height);
-    };
-    onResize();
-    window.onresize = onResize;
+    setOnResize(model,app);
 }
 //设置模型动作
 function setMotions(model,resources){
@@ -263,6 +217,22 @@ function setMouseTrick(model,app,canvas,motions){
         }
     };
 }
+//设置浏览器onResize事件
+function setOnResize(model, app){
+    var onResize = function (event) {
+        if (event === void 0) { event = null; }
+            var width = modelWidth;
+            var height = modelHight;
+            app.view.style.width = width + "px";
+            app.view.style.height = height + "px";
+            app.renderer.resize(width, height);
+            model.position = new PIXI.Point(modelWidth/2 + model_x, modelHight/2 + model_y);
+            model.scale = new PIXI.Point(scale,scale);
+            model.masks.resize(app.view.width, app.view.height);
+    };
+    onResize();
+    window.onresize = onResize;
+}
 //获取页面内容方法
 function bodyOrHtml(){
     if('scrollingElement' in document){ return document.scrollingElement; }
@@ -276,4 +246,26 @@ function loadProgressHandler(loader) {
         var loadTime = new Date().getTime() - startTime;
         console.log('Model initialized in '+ loadTime/1000 + ' second');
     }
+}
+//简单发送AJAX异步请求读取json文件
+function loadModel(url){
+    var ajax = null;
+    if(window.XMLHttpRequest){ajax = new XMLHttpRequest();}else if(window.ActiveObject){
+        ajax = new ActiveXObject("Microsoft.XMLHTTP");
+    }else{
+        throw new Error('loadModelJsonError');
+    }  
+    ajax.open('GET', url, true);
+    ajax.send();
+    ajax.onreadystatechange = function(){
+        if(ajax.readyState == 4){  
+            if(ajax.status == 200){ 
+                var data = JSON.parse(ajax.responseText)
+                //initModelConfig(data);
+                initModel(data);
+            }else{
+                console.error('Response error,Code:' + ajax.status);
+            }
+        }
+    };
 }
