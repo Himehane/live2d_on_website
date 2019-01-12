@@ -31,7 +31,7 @@ Baseed on EULA ，DO NOT pull Cubism SDKs on repositorie!DO NOT modify fiels in 
 
 Any legal dispute arising from the violation of the above provisions shall be the responsibility of the violators!
 
-如果你是fork该仓库，也请不要自己放SDK进自己的仓库里，这将违反Live2D公司对于SDK的不可在分发原则
+如果你是fork该仓库，也请不要自己放SDK进自己的仓库里，这将违反Live2D公司对于SDK的不可再分发原则
 
 ## LICENSE
 
