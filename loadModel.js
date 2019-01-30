@@ -14,10 +14,10 @@ var homeIndex;
 var model_x = -15;
 var model_y = 40;
 //渲染模型的宽高
-var modelWidth = 280;
-var modelHight = 250;
+var modelWidth = 400;
+var modelHight = 350;
 //渲染模型的比例
-var scale = 19;
+var scale = 20;
 //动作总数
 var motionCount = 0 ;
 //测试用，加载时间起点，不保证准确性
