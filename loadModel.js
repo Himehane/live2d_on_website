@@ -1,7 +1,7 @@
 var LIVE2DCUBISMCORE = Live2DCubismCore
 //如果资源在CDN，一定要写http://或者https://否则会以本域名请求且为相对路径
 //模型的model3.json文件路径
-var modelPath = window.location.protocol+'//'+ window.location.host+"/live2d_on_websit/Resource/../..";
+var modelPath = window.location.protocol+'//'+ window.location.host+"/live2d_on_websit/Resource/banrenma2/banrenma_2.model3.json";
 //模型渲染的位置
 var tag_target = '.waifu';
 //待机的动作索引
