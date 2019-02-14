@@ -4,11 +4,17 @@
 		<meta charset="UTF-8">
         <title>live2d</title>
         <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
-        <script src="pixi/pixi.min.js"></script>
-        <script src="core/live2dcubismcore.min.js"></script>
+        <script src="pixi/pixi.js"></script>
+        <script src="core/live2dcubismcore.js"></script>
         <script src="framework/live2dcubismframework.js"></script>
-        <script src="framework/live2dcubismpixi.js"></script>
+        <script src="framework/live2dcubismpixi.js"></script>        
+        <script src="/resource/jquery/jquery-1.12.4.min.js"></script>        
+        <script src="/resource/jquery/jquery-ui.min.js"></script>        
         <script src="loadModel.js"></script>
+        <!-- 新 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="/resource/jquery/bootstrap-3.3.5-dist/css/bootstrap.min.css">
+        <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+        <script src="/resource/jquery/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>        
     <style>
     .waifu {
         position: fixed;
@@ -257,10 +263,18 @@
     </style>
     </head>
 	<body>
+
+        <div class="progress">
+            <div id="live2d_progress" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                <span>0 %</span>
+            </div>
+        </div>
 		<div class="waifu">
             <div class="waifu-tips" style="opacity: 0;"></div>
             <canvas id="live2d"></canvas>
         </div>
     </body>
-    <script>loadModel(modelPath);</script>
+    <script>
+        loadModel();
+    </script>
 </html>

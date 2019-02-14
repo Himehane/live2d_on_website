@@ -1,7 +1,9 @@
 var LIVE2DCUBISMCORE = Live2DCubismCore
 //如果资源在CDN，一定要写http://或者https://否则会以本域名请求且为相对路径
 //模型的model3.json文件路径
-var modelPath = window.location.protocol+'//'+ window.location.host+"/live2d_on_websit/Resource/live2d/yichui_2/yichui_2.model3.json";
+var baseModelPath = window.location.protocol+'//'+ window.location.host+"/live2d_on_websit/Resource/live2d/";
+var modelNames = ["taiyuan_2","aierdeliqi_4","lafei_4","yichui_2","banrenma_2","xuefeng"];
+var modelPath;
 //模型渲染的位置
 var tag_target = '.waifu';
 //待机的动作索引
@@ -14,14 +16,12 @@ var homeIndex;
 var model_x = -15;
 var model_y = 40;
 //渲染模型的宽高
-var modelWidth = 400;
-var modelHight = 350;
+var modelWidth = 800;
+var modelHight = 700;
 //渲染模型的比例
-var scale = 20;
-//动作总数
-var motionCount = 0 ;
+var scale = 30;
 //测试用，加载时间起点，不保证准确性
-var startTime = new Date().getTime();
+var startTime = null;
 //第一种方式初始化模型，通过model3.json的内容去导入
 function initModelConfig(modelJson){
     var fileReferences = modelJson.FileReferences;
@@ -34,6 +34,8 @@ function initModelConfig(modelJson){
     for (const key in fileReferences.Motions) {
         loadMotions(fileReferences.Motions[key]);
     }
+    PIXI.loader.reset();
+    PIXI.utils.destroyTextureCache();
     PIXI.loader.on("progress", loadProgressHandler).load(function (loader, resources) {
         var canvas = document.querySelector(tag_target);
         var view = canvas.querySelector('canvas');
@@ -86,6 +88,8 @@ function loadPhyPath(phyPath){
 }
 //加载动作文件
 function loadMotions(motions){
+    //动作总数
+    var motionCount = 0 ;
     if(motions.length >0){
         for (let i = 0; i < motions.length; i++) {
             PIXI.loader.add('motion'+ ( motionCount + 1) , modelPath.substr(0, modelPath.lastIndexOf('/') + 1) + motions[i].File, { xhrType: PIXI.loaders.Resource.XHR_RESPONSE_TYPE.JSON });
@@ -105,18 +109,21 @@ function loadMotions(motions){
 //另一种初始化模型方式
 function initModel(data){
     var model3Obj = {data:data,url: modelPath.substr(0, modelPath.lastIndexOf('/') + 1)};
-    var loader =PIXI.loader.on("progress", loadProgressHandler);
+    PIXI.loader.reset();
+    PIXI.utils.destroyTextureCache();
     for (const key in data.FileReferences.Motions) {
         loadMotions(data.FileReferences.Motions[key]);
     }
     //调用此方法直接加载，并传入设置模型的回调方法
-    new LIVE2DCUBISMPIXI.ModelBuilder().buildFromModel3Json(loader, model3Obj, setModel);  
+    new LIVE2DCUBISMPIXI.ModelBuilder().buildFromModel3Json(PIXI.loader.on("progress", loadProgressHandler), model3Obj, setModel);  
 }
+var app = null;
 //设置模型的回调方法
 function setModel(model){
     var canvas = document.querySelector(tag_target);
     var view = canvas.querySelector('canvas');
-    var app = new PIXI.Application(modelWidth, modelHight, {transparent: true ,view:view});
+    if(app != null){app.stop();}
+    app = new PIXI.Application(modelWidth, modelHight, {transparent: true ,view:view});
     app.stage.addChild(model);
     app.stage.addChild(model.masks);
     var motions = setMotions(model,PIXI.loader.resources);
@@ -240,22 +247,33 @@ function bodyOrHtml(){
     return document.documentElement;
 }
 //加载模型Handler，监控加载进度
-function loadProgressHandler(loader) {
-    console.log("progress: " + Math.round(loader.progress) + "%");
+function loadProgressHandler(loader,resources) {
+    //console.log("LoadFile: " + resources.url.substr(resources.url.lastIndexOf("/") + 1)
+    //           + "\t" + Math.round(loader.progress) + " %");
+    //暂时使用bootstrap进度条
+    document.querySelector("#live2d_progress").setAttribute("style","width: "+Math.round(loader.progress) + "%");
+    document.querySelector("#live2d_progress").setAttribute("aria-valuenow",Math.round(loader.progress));
+    document.querySelector("#live2d_progress").querySelector("span").innerHTML = resources.url.substr(resources.url.lastIndexOf("/") + 1) + " " +Math.round(loader.progress) + " %";
     if(loader.progress >= 100){ 
         var loadTime = new Date().getTime() - startTime;
         console.log('Model initialized in '+ loadTime/1000 + ' second');
+        PIXI.loader.off("progress", loadProgressHandler);//监听事件在加载完毕后取消
     }
 }
 //简单发送AJAX异步请求读取json文件
-function loadModel(url){
+function loadModel(){
+    //优化从异步加载开始计时
+    startTime = new Date().getTime();
+    //拼接路径
+    var modelName =  modelNames[Math.floor(Math.random() * modelNames.length )];
+    modelPath =  baseModelPath + modelName + "/" + modelName + ".model3.json";
     var ajax = null;
     if(window.XMLHttpRequest){ajax = new XMLHttpRequest();}else if(window.ActiveObject){
         ajax = new ActiveXObject("Microsoft.XMLHTTP");
     }else{
         throw new Error('loadModelJsonError');
     }  
-    ajax.open('GET', url, true);
+    ajax.open('GET', modelPath, true);
     ajax.send();
     ajax.onreadystatechange = function(){
         if(ajax.readyState == 4){  
