@@ -1,9 +1,11 @@
 var LIVE2DCUBISMCORE = Live2DCubismCore
 //如果资源在CDN，一定要写http://或者https://否则会以本域名请求且为相对路径
 //模型的model3.json文件路径
-var baseModelPath = window.location.protocol+'//'+ window.location.host+"/live2d_on_websit/Resource/live2d/";
-var modelNames = ["taiyuan_2","aierdeliqi_4","lafei_4","yichui_2","banrenma_2","xuefeng"];
+var baseModelPath = window.location.protocol+'//'+ window.location.host+"/live2d_on_websit/Resource/.../";
+var modelNames = ["modelname1","modelname2","modelname3","...","..."];
 var modelPath;
+//Application全局变量
+var app = null;
 //模型渲染的位置
 var tag_target = '.waifu';
 //待机的动作索引
@@ -39,7 +41,8 @@ function initModelConfig(modelJson){
     PIXI.loader.on("progress", loadProgressHandler).load(function (loader, resources) {
         var canvas = document.querySelector(tag_target);
         var view = canvas.querySelector('canvas');
-        var app = new PIXI.Application(modelWidth, modelHight, {transparent: true ,view: view});
+        if(app != null){app.stop();}
+        app = new PIXI.Application(modelWidth, modelHight, {transparent: true ,view: view});
         var moc = Live2DCubismCore.Moc.fromArrayBuffer(resources['moc'].data);
         var builder = new LIVE2DCUBISMPIXI.ModelBuilder();
         builder.setMoc(moc);
@@ -109,6 +112,7 @@ function loadMotions(motions){
 //另一种初始化模型方式
 function initModel(data){
     var model3Obj = {data:data,url: modelPath.substr(0, modelPath.lastIndexOf('/') + 1)};
+    //清除loader内的内容，并清除缓存中的内容
     PIXI.loader.reset();
     PIXI.utils.destroyTextureCache();
     for (const key in data.FileReferences.Motions) {
@@ -117,11 +121,11 @@ function initModel(data){
     //调用此方法直接加载，并传入设置模型的回调方法
     new LIVE2DCUBISMPIXI.ModelBuilder().buildFromModel3Json(PIXI.loader.on("progress", loadProgressHandler), model3Obj, setModel);  
 }
-var app = null;
 //设置模型的回调方法
 function setModel(model){
     var canvas = document.querySelector(tag_target);
     var view = canvas.querySelector('canvas');
+    //重复加载模型是，先停止渲染，否则后台WebGL会报警告
     if(app != null){app.stop();}
     app = new PIXI.Application(modelWidth, modelHight, {transparent: true ,view:view});
     app.stage.addChild(model);
@@ -247,13 +251,8 @@ function bodyOrHtml(){
     return document.documentElement;
 }
 //加载模型Handler，监控加载进度
-function loadProgressHandler(loader,resources) {
-    //console.log("LoadFile: " + resources.url.substr(resources.url.lastIndexOf("/") + 1)
-    //           + "\t" + Math.round(loader.progress) + " %");
-    //暂时使用bootstrap进度条
-    document.querySelector("#live2d_progress").setAttribute("style","width: "+Math.round(loader.progress) + "%");
-    document.querySelector("#live2d_progress").setAttribute("aria-valuenow",Math.round(loader.progress));
-    document.querySelector("#live2d_progress").querySelector("span").innerHTML = resources.url.substr(resources.url.lastIndexOf("/") + 1) + " " +Math.round(loader.progress) + " %";
+function loadProgressHandler(loader) {
+    console.log("progress: " + Math.round(loader.progress) + "%");
     if(loader.progress >= 100){ 
         var loadTime = new Date().getTime() - startTime;
         console.log('Model initialized in '+ loadTime/1000 + ' second');
@@ -264,8 +263,10 @@ function loadProgressHandler(loader,resources) {
 function loadModel(){
     //优化从异步加载开始计时
     startTime = new Date().getTime();
-    //拼接路径
+    //随机模型，如果想指定模型可以将随机值改为指定参数，或直接传指定模型名
     var modelName =  modelNames[Math.floor(Math.random() * modelNames.length )];
+    //拼接路径
+    //如果model3的文件形如baseModelPath/xxx/xxx.model3.json则下面不用修改，否则按照文件路径进行修改
     modelPath =  baseModelPath + modelName + "/" + modelName + ".model3.json";
     var ajax = null;
     if(window.XMLHttpRequest){ajax = new XMLHttpRequest();}else if(window.ActiveObject){
