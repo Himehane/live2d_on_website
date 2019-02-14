@@ -253,7 +253,8 @@ function bodyOrHtml(){
 //加载模型Handler，监控加载进度
 function loadProgressHandler(loader) {
     console.log("progress: " + Math.round(loader.progress) + "%");
-    if(loader.progress >= 100){ 
+    //有可能值会小于100，但是也加载完毕，比如99.9999999997这样
+    if(Math.round(loader.progress) >= 100){ 
         var loadTime = new Date().getTime() - startTime;
         console.log('Model initialized in '+ loadTime/1000 + ' second');
         PIXI.loader.off("progress", loadProgressHandler);//监听事件在加载完毕后取消
