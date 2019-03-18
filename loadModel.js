@@ -1,7 +1,7 @@
 var LIVE2DCUBISMCORE = Live2DCubismCore
 //如果资源在CDN，一定要写http://或者https://否则会以本域名请求且为相对路径
 //模型的model3.json文件路径
-var baseModelPath = window.location.protocol+'//'+ window.location.host+"/live2d_on_websit/Resource/.../";
+var baseModelPath = window.location.protocol+'//'+ window.location.host+"/live2d_on_website/Resource/.../";
 var modelNames = ["modelname1","modelname2","modelname3","...","..."];
 var modelPath;
 //Application全局变量
@@ -38,7 +38,9 @@ function initModelConfig(modelJson){
     }
     PIXI.loader.reset();
     PIXI.utils.destroyTextureCache();
-    PIXI.loader.on("progress", loadProgressHandler).load(function (loader, resources) {
+    PIXI.loader
+        .on("progress", loadProgressHandler).on("complete",loadCompleteHandler)
+        .load(function (loader, resources) {
         var canvas = document.querySelector(tag_target);
         var view = canvas.querySelector('canvas');
         if(app != null){app.stop();}
@@ -119,7 +121,7 @@ function initModel(data){
         loadMotions(data.FileReferences.Motions[key]);
     }
     //调用此方法直接加载，并传入设置模型的回调方法
-    new LIVE2DCUBISMPIXI.ModelBuilder().buildFromModel3Json(PIXI.loader.on("progress", loadProgressHandler), model3Obj, setModel);  
+    new LIVE2DCUBISMPIXI.ModelBuilder().buildFromModel3Json(PIXI.loader.on("progress", loadProgressHandler).on("complete", loadCompleteHandler), model3Obj, setModel);  
 }
 //设置模型的回调方法
 function setModel(model){
@@ -253,12 +255,12 @@ function bodyOrHtml(){
 //加载模型Handler，监控加载进度
 function loadProgressHandler(loader) {
     console.log("progress: " + Math.round(loader.progress) + "%");
-    //有可能值会小于100，但是也加载完毕，比如99.9999999997这样
-    if(Math.round(loader.progress) >= 100){ 
-        var loadTime = new Date().getTime() - startTime;
-        console.log('Model initialized in '+ loadTime/1000 + ' second');
-        PIXI.loader.off("progress", loadProgressHandler);//监听事件在加载完毕后取消
-    }
+}
+//加载模型结束Handler
+function loadCompleteHandler(){
+    var loadTime = new Date().getTime() - startTime;
+    console.log('Model initialized in '+ loadTime/1000 + ' second');
+    PIXI.loader.off("progress", loadProgressHandler);//监听事件在加载完毕后取消
 }
 //简单发送AJAX异步请求读取json文件
 function loadModel(){
