@@ -7,7 +7,7 @@ var modelPath;
 //Application全局变量
 var app = null;
 //模型渲染的位置
-var tag_target = '.waifu';
+var tag_target = '#live2d';
 //待机的动作索引
 var idleIndex;
 //登录的动作索引，只针对动作文件中有idel字段的
