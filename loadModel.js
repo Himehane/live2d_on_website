@@ -39,7 +39,9 @@ function initModelConfig(modelJson){
     PIXI.loader.reset();
     PIXI.utils.destroyTextureCache();
     PIXI.loader
-        .on("progress", loadProgressHandler).on("complete",loadCompleteHandler)
+        .on("start", loadStartHandler)
+        .on("progress", loadProgressHandler)
+        .on("complete", loadCompleteHandler)
         .load(function (loader, resources) {
         var canvas = document.querySelector(tag_target);
         var view = canvas.querySelector('canvas');
@@ -121,7 +123,14 @@ function initModel(data){
         loadMotions(data.FileReferences.Motions[key]);
     }
     //调用此方法直接加载，并传入设置模型的回调方法
-    new LIVE2DCUBISMPIXI.ModelBuilder().buildFromModel3Json(PIXI.loader.on("progress", loadProgressHandler).on("complete", loadCompleteHandler), model3Obj, setModel);  
+    new LIVE2DCUBISMPIXI.ModelBuilder().buildFromModel3Json(
+      PIXI.loader
+        .on("start", loadStartHandler)
+        .on("progress", loadProgressHandler)
+        .on("complete", loadCompleteHandler),
+      model3Obj,
+      setModel
+    );  
 }
 //设置模型的回调方法
 function setModel(model){
@@ -252,20 +261,26 @@ function bodyOrHtml(){
     if(navigator.userAgent.indexOf('WebKit') != -1){ return document.body; }
     return document.documentElement;
 }
+//加载模型开始时Handler
+function loadStartHandler(){
+    //优化加载开始计时
+    startTime = new Date();
+    console.log("Start loading Model at " + startTime);
+}
 //加载模型Handler，监控加载进度
 function loadProgressHandler(loader) {
     console.log("progress: " + Math.round(loader.progress) + "%");
 }
 //加载模型结束Handler
 function loadCompleteHandler(){
-    var loadTime = new Date().getTime() - startTime;
+    var loadTime = new Date().getTime() - startTime.getTime();
     console.log('Model initialized in '+ loadTime/1000 + ' second');
+    PIXI.loader.off("start", loadStartHandler);//监听事件在加载完毕后取消
     PIXI.loader.off("progress", loadProgressHandler);//监听事件在加载完毕后取消
+    PIXI.loader.off("complete", loadCompleteHandler);//监听事件在加载完毕后取消
 }
 //简单发送AJAX异步请求读取json文件
 function loadModel(){
-    //优化从异步加载开始计时
-    startTime = new Date().getTime();
     //随机模型，如果想指定模型可以将随机值改为指定参数，或直接传指定模型名
     var modelName =  modelNames[Math.floor(Math.random() * modelNames.length )];
     //拼接路径
