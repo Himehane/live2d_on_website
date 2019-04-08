@@ -33,7 +33,7 @@ function initModelConfig(modelJson){
     loadTextures(textures);
     var phyPath = fileReferences.Physics;
     loadPhyPath(phyPath);
-    for (const key in fileReferences.Motions) {
+    for (var key in fileReferences.Motions) {
         loadMotions(fileReferences.Motions[key]);
     }
     PIXI.loader.reset();
@@ -52,7 +52,7 @@ function initModelConfig(modelJson){
         builder.setMoc(moc);
         builder.setTimeScale(1);
         var textureIndex = 0;
-        for (const key in resources) {
+        for (var key in resources) {
             if(key.indexOf('texture')!= -1){
                 builder.addTexture(textureIndex++ , resources[key].texture);
             }
@@ -77,7 +77,7 @@ function loadMoc(mocPath){
 //加载 texture 文件
 function loadTextures(textures){
     if(textures.length >0){
-        for (let i = 0; i < textures.length; i++) {
+        for (var i = 0; i < textures.length; i++) {
             //loadTextures;
             PIXI.loader.add('texture' + ( i + 1) , modelPath.substr(0, modelPath.lastIndexOf('/') + 1) + textures[i]);
         }
@@ -98,7 +98,7 @@ function loadMotions(motions){
     //动作总数
     var motionCount = 0 ;
     if(motions.length >0){
-        for (let i = 0; i < motions.length; i++) {
+        for (var i = 0; i < motions.length; i++) {
             PIXI.loader.add('motion'+ ( motionCount + 1) , modelPath.substr(0, modelPath.lastIndexOf('/') + 1) + motions[i].File, { xhrType: PIXI.loaders.Resource.XHR_RESPONSE_TYPE.JSON });
             if(motions[i].File.indexOf('idle')!= -1){
                 idleIndex = motionCount;
@@ -119,7 +119,7 @@ function initModel(data){
     //清除loader内的内容，并清除缓存中的内容
     PIXI.loader.reset();
     PIXI.utils.destroyTextureCache();
-    for (const key in data.FileReferences.Motions) {
+    for (var key in data.FileReferences.Motions) {
         loadMotions(data.FileReferences.Motions[key]);
     }
     //调用此方法直接加载，并传入设置模型的回调方法
@@ -149,7 +149,7 @@ function setModel(model){
 function setMotions(model,resources){
     //动作数组，存放格式化好的动作数据
     var motions = [];
-    for (const key in resources) {
+    for (var key in resources) {
         if(key.indexOf('motion') != -1){
             motions.push(LIVE2DCUBISMFRAMEWORK.Animation.fromMotion3Json(resources[key].data)); 
         }
